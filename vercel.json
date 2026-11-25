@@ -3,6 +3,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/mesa", "destination": "/mesa/index.html" },
     { "source": "/equipe", "destination": "/equipe/index.html" },
     { "source": "/gestao", "destination": "/gestao/index.html" }
   ]

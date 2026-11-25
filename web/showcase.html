@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#680c24">
+  <title>Mesa Atenta · MVP integrado</title>
+  <link rel="stylesheet" href="/showcase.css">
+  <script src="/showcase.js" defer></script>
+</head>
+<body>
+  <header class="hero-bar">
+    <a class="bovinus-brand" href="/" aria-label="Bovinu's Grill & Beer — Augusta">
+      <svg viewBox="0 0 90 68" aria-hidden="true"><path d="M9 8c7 17 17 19 28 13m44-13C74 25 64 27 53 21M18 16c-8 0-13-5-14-11m68 11c8 0 13-5 14-11M37 21c-6 6-9 14-7 21 2 9 8 15 15 20 7-5 13-11 15-20 2-7-1-15-7-21M35 34l10 8 10-8M45 42v17"/></svg>
+      <span><strong>Bovinu’s</strong><small>— Grill &amp; Beer —</small></span>
+    </a>
+    <span class="brand-divider" aria-hidden="true"></span>
+    <div class="hero-title"><span aria-hidden="true"></span><div><h1>Mesa Atenta</h1><p>MVP integrado · Bovinu’s Grill &amp; Beer — Augusta</p></div><span aria-hidden="true"></span></div>
+    <div class="hero-corner" aria-hidden="true"></div>
+  </header>
+
+  <main class="showcase-shell">
+    <section class="screens" aria-label="Fluxo integrado do Mesa Atenta">
+      <article class="desktop-panel management-panel">
+        <header class="panel-head">
+          <h2><span class="line-icon">▣</span> Gestão do almoço</h2>
+          <nav aria-label="Abrir telas completas"><a class="active" href="/gestao">Gestão</a><span></span><a href="/equipe">Salão</a><span></span><a href="/mesa?mesa=07">Mesa</a></nav>
+          <span class="demo-badge">Demonstração · dados simulados</span>
+        </header>
+        <div class="panel-body">
+          <section class="management-section queue-section">
+            <h3><span class="section-icon">♧</span> Filas e avisos</h3>
+            <div class="queue-grid">
+              <article class="queue-card danger" data-queue="churrasqueira">
+                <span class="queue-art">♨</span><div><h4>Churrasqueira</h4><strong><span data-queue-people>8</span> pessoas</strong><small>Limite: <span data-queue-limit>8</span></small></div>
+                <span class="state danger-state"><b>!</b> <span data-queue-state>Acúmulo detectado</span></span>
+              </article>
+              <article class="queue-card safe" data-queue="buffet">
+                <span class="queue-art">⌒</span><div><h4>Buffet</h4><strong><span data-queue-people>3</span> pessoas</strong><small>Espera: 2 min</small></div>
+                <span class="state safe-state"><b>✓</b> <span data-queue-state>Sem alerta</span></span>
+              </article>
+            </div>
+            <div class="alert-action">
+              <button id="acknowledge-alert" type="button">Confirmar ciência</button>
+              <label for="manager-action">Ação tomada</label>
+              <input id="manager-action" maxlength="240" placeholder="Ex.: reforçar equipe, orientar fila...">
+              <button id="save-manager-action" class="gold-button" type="button">Salvar ação</button>
+            </div>
+            <div class="comparison-strip"><span>◷</span> Espera mediana antes: <strong>7 min</strong> <i></i> Depois: <strong>4 min</strong></div>
+          </section>
+
+          <section class="management-section quality-section">
+            <h3><span class="section-icon">♙</span> Composição e qualidade</h3>
+            <div class="quality-grid">
+              <article><h4><span>⚖</span> Pesagem do prato</h4><p><strong data-mix-meat>160 g</strong> carne<br><strong data-mix-other>322 g</strong> outros</p><b class="metric"><span data-mix-percent>33</span>% carne</b></article>
+              <article><h4><span>◉</span> Sobras por item</h4><p data-leftover-item>Farofa</p><b class="metric"><span data-leftover-count>3</span> de <span data-leftover-total>8</span> pratos</b></article>
+              <article><h4><span>☵</span> Comentário</h4><p><small data-comment-source>Buffet · Farofa</small><br><span data-comment-note>Quais ingredientes entram na farofa?</span></p></article>
+              <article><h4><span>☑</span> Ação do gerente</h4><p data-quality-action>Melhorar identificação do item</p></article>
+            </div>
+            <div class="after-action"><strong>▥ &nbsp; Comparação após a ação</strong><i></i><span class="before">Antes: 3/8 pratos</span><b>→</b><span class="after">Depois: 1/8 pratos</span></div>
+          </section>
+          <p class="inline-status" id="management-status" role="status"></p>
+        </div>
+      </article>
+
+      <div class="flow-arrow" aria-hidden="true">→</div>
+
+      <article class="phone-panel staff-phone">
+        <div class="phone-top"><span>12:30</span><span>▥ ◉ ▰</span></div>
+        <header><h2><span>♬</span> Salão</h2></header>
+        <div class="phone-content">
+          <label class="sr-only" for="room-select">Salão</label>
+          <select id="room-select"><option>Salão principal</option><option>Salão superior</option><option>Salão inferior</option></select>
+          <section>
+            <h3><span>♨</span> Atendimento à mesa</h3>
+            <div id="staff-call" class="task-card">
+              <span class="task-icon">♧</span><div><strong>Mesa 07 · Bebida</strong><small><span>◷</span> <span data-call-time>2 min 18 s</span></small></div><button type="button" data-call-action>Assumir</button>
+            </div>
+          </section>
+          <section>
+            <h3><span>♨</span> Limpeza do salão</h3>
+            <div id="clean-waiting" class="task-card">
+              <span class="task-icon">♙</span><div><strong>Mesa 12 · <span data-clean-state>Aguardando limpeza</span></strong><small><span>◷</span> <span data-clean-time>3 min 05 s</span></small></div><button type="button" data-clean-action>Assumir limpeza</button>
+            </div>
+            <div id="clean-active" class="task-card active-task">
+              <span class="task-icon">✧</span><div><strong>Mesa 12 · Em limpeza</strong></div><button type="button" data-clean-finish>Mesa pronta</button>
+            </div>
+          </section>
+          <form id="cleaning-form" class="cleaning-form">
+            <label for="cleaning-table">♨ &nbsp; Sinalizar mesa para limpeza</label>
+            <div><select id="cleaning-table"><option value="12">Mesa 12</option><option value="7">Mesa 07</option><option value="18">Mesa 18</option></select><button type="submit">Sinalizar</button></div>
+          </form>
+          <p class="inline-status" id="staff-status" role="status"></p>
+        </div>
+      </article>
+
+      <div class="flow-arrow" aria-hidden="true">→</div>
+
+      <article class="phone-panel client-phone">
+        <div class="phone-top"><span>12:30</span><span>▥ ◉ ▰</span></div>
+        <header><h2><span>♧</span> Cliente</h2></header>
+        <div class="phone-content">
+          <div class="table-label"><span>▱</span> Mesa 07 · <small>Salão principal</small></div>
+          <h3 class="client-question">Como podemos ajudar?</h3>
+          <button class="client-action" type="button" data-client-reason="bebida"><span>♧</span> Pedir atendimento<br>para bebida</button>
+          <button class="client-action" type="button" data-client-reason="atendimento"><span>⌒</span> Chamar atendimento</button>
+          <div class="client-progress" data-client-progress="waiting">
+            <div><i>✓</i><span>Aguardando</span></div><div class="current"><i></i><span>Em<br>atendimento</span></div><div><i></i><span>Concluído</span></div>
+          </div>
+          <div class="client-confirmation" id="client-confirmation"><span>✓</span><strong>Um garçom assumiu<br>seu chamado.</strong></div>
+          <p class="inline-status" id="client-status" role="status"></p>
+        </div>
+      </article>
+    </section>
+
+    <section class="process-flow" aria-label="Ciclo da operação">
+      <div><span>♧</span> Evento registrado</div><b>→</b><div><span>♧</span> Aviso para quem pode agir</div><b>→</b><div><span>☑</span> Tarefa assumida</div><b>→</b><div><span>▥</span> Resultado e tempo registrados</div>
+    </section>
+    <p class="data-note"><span></span> Dados operacionais no Supabase · atualização automática do painel <span></span></p>
+  </main>
+</body>
+</html>
