@@ -1,25 +1,10 @@
 (() => {
-  const storageKey = 'mesa-atenta-sites-v2';
+  const supabaseUrl = 'https://srctcgojbvdxiiyqgqkd.supabase.co';
+  const publishableKey = 'sb_publishable_YknjgKw9XcADgT3B5sPskA_ipovMAUp';
+  const sessionId = 'a9a04ad0-3c28-4f21-8cf1-8be2f7d66b21';
+  const client = window.supabase?.createClient(supabaseUrl, publishableKey);
   const realFetch = window.fetch.bind(window);
   const places = ['churrasqueira', 'buffet'];
-
-  function seed(now) {
-    return {
-      next: 6, calls: [], rules: { churrasqueira: 8, buffet: 8 }, receipts: {},
-      cleaning: [{ id: 1, table_no: 12, created: now - 180, started: null, finished: null }],
-      readings: [
-        { place: 'churrasqueira', people: 8, observed: now - 65, wait_seconds: 420 },
-        { place: 'churrasqueira', people: 9, observed: now - 10, wait_seconds: 390 },
-        { place: 'buffet', people: 3, observed: now - 12, wait_seconds: 120 },
-      ],
-      alerts: [{ id: 2, place: 'churrasqueira', opened: now - 10, acknowledged: null, action: null, action_at: null, closed: null }],
-      observations: [
-        { id: 5, kind: 'comentario', item: 'Farofa', source: 'Buffet', note: 'Quais ingredientes entram na farofa?' },
-        { id: 4, kind: 'sobra', item: 'Farofa', source: 'Retirada', first_value: 3, second_value: 8, note: '' },
-        { id: 3, kind: 'mix', item: 'Composição por peso', source: 'Pesagem', first_value: 160, second_value: 322, note: '' },
-      ],
-    };
-  }
 
   const area = (number) => number <= 30 ? 'Salão principal' : number <= 70 ? 'Salão superior' : 'Salão inferior';
   const response = (value, status = 200) => new Response(JSON.stringify(value), {
@@ -27,6 +12,29 @@
   });
   function requireValue(condition, message) {
     if (!condition) throw new Error(message);
+  }
+
+  async function loadSession() {
+    requireValue(client, 'Integração com o banco indisponível.');
+    const { data, error } = await client.from('demo_sessions')
+      .select('version,state').eq('id', sessionId).single();
+    if (error) throw new Error('Não foi possível carregar a operação compartilhada.');
+    return data;
+  }
+
+  async function mutate(mutator) {
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      const current = await loadSession();
+      const state = structuredClone(current.state);
+      const outcome = mutator(state);
+      if (!outcome.changed) return outcome.result;
+      const { data, error } = await client.from('demo_sessions').update({
+        state, version: current.version + 1, updated_at: new Date().toISOString(),
+      }).eq('id', sessionId).eq('version', current.version).select('version').maybeSingle();
+      if (error) throw new Error('Não foi possível salvar a operação compartilhada.');
+      if (data) return outcome.result;
+    }
+    throw new Error('Outra pessoa atualizou o painel. Tente novamente.');
   }
   const validInt = (value, min, max) => Number.isInteger(value) && value >= min && value <= max;
   function median(values) {
@@ -123,41 +131,51 @@
     if (url.origin !== location.origin || !url.pathname.startsWith('/api/')) return realFetch(input, options);
     try {
       const now = Math.floor(Date.now() / 1000);
-      const saved = localStorage.getItem(storageKey);
-      const state = saved ? JSON.parse(saved) : seed(now);
-      if (!saved) localStorage.setItem(storageKey, JSON.stringify(state));
       if (options.method !== 'POST') {
+        const { state } = await loadSession();
         if (url.pathname === '/api/operacao') return response(operations(state, now));
         const table = url.searchParams.get('mesa');
         return response({ now, calls: state.calls.filter((row) => table === null || row.table === Number(table)) });
       }
       const data = options.body ? JSON.parse(options.body) : {};
-      let result = { ok: true };
-      if (data.key && Object.hasOwn(state.receipts, data.key)) return response(state.receipts[data.key]);
-      if (url.pathname.startsWith('/api/operacao/')) {
-        change(state, url.pathname.split('/').at(-1), data, now);
-      } else if (url.pathname === '/api/chamados') {
-        requireValue(validInt(data.table, 1, 90), 'Informe uma mesa válida.');
-        result = state.calls.find((row) => row.table === data.table && row.reason === data.reason && row.finished === null);
-        if (!result) {
-          result = { id: state.next++, table: data.table, reason: data.reason, area: area(data.table), created: now, started: null, finished: null };
-          state.calls.push(result);
+      const result = await mutate((state) => {
+        let value = { ok: true };
+        if (data.key && Object.hasOwn(state.receipts, data.key)) {
+          return { changed: false, result: state.receipts[data.key] };
         }
-      } else {
-        const [, id, action] = url.pathname.match(/^\/api\/chamados\/(\d+)\/(assumir|concluir)$/) ?? [];
-        result = state.calls.find((row) => row.id === Number(id));
-        requireValue(result, 'Chamado não encontrado.');
-        if (action === 'assumir') result.started ??= now;
-        else {
-          requireValue(result.started !== null, 'Assuma o chamado antes de concluir.');
-          result.finished ??= now;
+        if (url.pathname.startsWith('/api/operacao/')) {
+          change(state, url.pathname.split('/').at(-1), data, now);
+        } else if (url.pathname === '/api/chamados') {
+          requireValue(validInt(data.table, 1, 90), 'Informe uma mesa válida.');
+          value = state.calls.find((row) => row.table === data.table && row.reason === data.reason && row.finished === null);
+          if (!value) {
+            value = { id: state.next++, table: data.table, reason: data.reason, area: area(data.table), created: now, started: null, finished: null };
+            state.calls.push(value);
+          }
+        } else {
+          const [, id, action] = url.pathname.match(/^\/api\/chamados\/(\d+)\/(assumir|concluir)$/) ?? [];
+          value = state.calls.find((row) => row.id === Number(id));
+          requireValue(value, 'Chamado não encontrado.');
+          if (action === 'assumir') value.started ??= now;
+          else {
+            requireValue(value.started !== null, 'Assuma o chamado antes de concluir.');
+            value.finished ??= now;
+          }
         }
-      }
-      if (data.key) state.receipts[data.key] = result;
-      localStorage.setItem(storageKey, JSON.stringify(state));
+        if (data.key) state.receipts[data.key] = value;
+        return { changed: true, result: value };
+      });
       return response(result);
     } catch (error) {
       return response({ error: error.message }, 400);
     }
   };
+
+  if (client) {
+    client.channel('mesa-atenta-operacao')
+      .on('postgres_changes', {
+        event: 'UPDATE', schema: 'public', table: 'demo_sessions', filter: `id=eq.${sessionId}`,
+      }, () => window.dispatchEvent(new Event('mesa-atenta:change')))
+      .subscribe();
+  }
 })();

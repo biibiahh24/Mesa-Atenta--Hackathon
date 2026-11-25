@@ -40,9 +40,14 @@ No PowerShell, defina `$env:MESA_DB='demo.sqlite3'` antes de executar `py app.py
 
 [Abrir a implantação pública na Vercel](https://mesa-atenta-hackathon.vercel.app).
 
-A pasta `public/` contém a mesma demonstração estática para implantação na Vercel.
-Ela persiste dados simulados no navegador e não substitui o backend Python/SQLite.
-Para uma implantação multiusuário, a persistência deve migrar para PostgreSQL/Supabase.
+A pasta `public/` contém a demonstração estática implantada na Vercel. As telas
+compartilham uma sessão no Supabase/PostgreSQL e recebem atualizações pelo Realtime.
+O controle otimista de versão evita que duas ações simultâneas sobrescrevam o estado.
+
+O publishable key do Supabase é público por definição; nenhuma `service_role` é enviada
+ao navegador. O esquema, os grants explícitos e as políticas RLS estão em
+`supabase/migrations/`. A política atual é exclusiva da sessão pública da demo. Antes de
+uso real, adicione autenticação da equipe e políticas por função/unidade.
 
 ## Desenvolvimento e integração
 

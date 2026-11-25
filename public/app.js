@@ -154,6 +154,7 @@ if (staff) {
 }
 
 if (staff || validTable) {
+  window.addEventListener('mesa-atenta:change', refresh);
   void refresh();
   setInterval(refresh, 2000);
 }

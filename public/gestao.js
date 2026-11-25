@@ -210,6 +210,7 @@
     get('cleaning-panel').hidden = false;
     get('area').addEventListener('change', render);
   }
+  window.addEventListener('mesa-atenta:change', refresh);
   void refresh();
   setInterval(refresh, 2500);
 })();
