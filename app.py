@@ -15,15 +15,16 @@ ROOT = Path(__file__).resolve().parent
 DB = os.environ.get("MESA_DB", ROOT / "mesa.sqlite3")
 AREAS = {1: "Salão principal", 31: "Salão superior", 71: "Salão inferior"}
 ASSETS = {
-    "/": ("index.html", "text/html"),
-    "/mesa": ("index.html", "text/html"),
-    "/gestao": ("gestao.html", "text/html"),
-    "/gestao.js": ("gestao.js", "text/javascript"),
-    "/equipe": ("index.html", "text/html"),
-    "/app.js": ("app.js", "text/javascript"),
-    "/style.css": ("style.css", "text/css"),
-    "/showcase.js": ("showcase.js", "text/javascript"),
-    "/showcase.css": ("showcase.css", "text/css"),
+    "/": ("public/index.html", "text/html"),
+    "/mesa": ("public/mesa/index.html", "text/html"),
+    "/gestao": ("public/gestao/index.html", "text/html"),
+    "/equipe": ("public/equipe/index.html", "text/html"),
+    "/gestao.js": ("public/gestao.js", "text/javascript"),
+    "/app.js": ("public/app.js", "text/javascript"),
+    "/style.css": ("public/style.css", "text/css"),
+    "/operacao.css": ("public/operacao.css", "text/css"),
+    "/showcase.js": ("web/showcase.js", "text/javascript"),
+    "/showcase.css": ("public/showcase.css", "text/css"),
 }
 
 
@@ -93,7 +94,14 @@ class Handler(BaseHTTPRequestHandler):
         url = urlsplit(self.path)
         if url.path in ASSETS:
             name, kind = ASSETS[url.path]
-            return self.respond(200, (ROOT / "web" / name).read_bytes(), kind)
+            body = (ROOT / name).read_bytes()
+            if kind == "text/html":
+                # SQLite serves the same UI, without the hosted Supabase adapter.
+                body = b"\n".join(
+                    line for line in body.split(b"\n")
+                    if b'cdn.jsdelivr.net/npm/@supabase/' not in line and b'src="/demo.js"' not in line
+                )
+            return self.respond(200, body, kind)
         if url.path == "/api/operacao":
             try:
                 with closing(connect()) as db, db:

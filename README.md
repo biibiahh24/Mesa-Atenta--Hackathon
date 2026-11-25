@@ -22,7 +22,7 @@ python3 app.py
 - Salão: http://127.0.0.1:8000/equipe
 - Gestão: http://127.0.0.1:8000/gestao
 
-Nenhuma variável é obrigatória. `PORT` altera a porta padrão 8000. `MESA_DB` define o caminho do SQLite. No Windows, use `py app.py`. O servidor padrão escuta apenas em localhost. As três telas compartilham o mesmo banco em modo demonstração local, sem autenticação.
+Nenhuma variável é obrigatória. `PORT` altera a porta padrão 8000. `MESA_DB` define o caminho do SQLite. No Windows, use `py app.py`. O servidor padrão escuta apenas em localhost. A versão local usa as mesmas telas da Vercel, com uma API Python e SQLite no lugar do Supabase. Os dados são compartilhados entre janelas conectadas ao mesmo servidor local; não há autenticação.
 
 Para começar com dados **simulados** em um banco novo, execute:
 
@@ -64,6 +64,15 @@ A base do atendimento foi preservada. A segunda etapa acrescentou limpeza com tr
 
 Por padrão, um aviso abre depois de duas ou mais contagens compatíveis com acúmulo, separadas por pelo menos 45 s, sem intervalo maior que 90 s. O limite padrão é 8 pessoas por local e pode ser ajustado. A recuperação requer contagens abaixo do limite pelo mesmo período. A interface sinaliza leitura desatualizada após 90 s. A comparação de espera usa amostras cronometradas e mostra a mediana e o tamanho da amostra. São comparações descritivas da demo.
 
-A numeração em três áreas é ilustrativa. O endereço da tela da mesa pode ser codificado no QR. A comanda eletrônica do restaurante continua registrando as bebidas. A versão local usa entrada manual para contagem e pesagem. A captura por câmera e a análise por IA permanecem como possibilidades de evolução.
+A numeração em três áreas é ilustrativa. O endereço da tela da mesa pode ser codificado no QR. A comanda eletrônica do restaurante continua registrando as bebidas. A versão local usa entrada manual para contagem e pesagem. Botões de amostra preenchem exemplos simulados de fila, pesagem e limpeza. A equipe confirma antes de salvar. Comentários recebem sugestões por palavras-chave. Não há análise de câmera, reconhecimento de pratos nem inferência de IA real nesta versão.
 
 Consulte [roteiro, checklist e testes](docs/DEMO.md) e [apresentação](docs/apresentacao.pdf).
+
+### Verificação pelo navegador
+
+Com um banco de demonstração recém-criado e o servidor na porta 8765, execute
+`MESA_URL=http://127.0.0.1:8765 node tests/verify_ui.cjs` em um ambiente com
+Playwright e Chromium. Use `CHROMIUM` para informar uma instalação de Chromium
+alternativa e `MESA_EVIDENCE` para salvar até cinco capturas. O teste usa três
+contextos independentes e altera o banco usado pelo servidor: não aponte o teste para
+o ambiente de produção nem para uma sessão compartilhada com avaliadores.

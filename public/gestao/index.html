@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gestão do almoço · Mesa Atenta</title>
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/operacao.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.min.js" defer></script>
   <script src="/demo.js" defer></script>
   <script src="/gestao.js" defer></script>
 </head>
-<body>
+<body data-role="Gestão">
 <header>
   <div class="shell top">
     <a class="brand" href="/gestao">Bovinu’s · Mesa Atenta</a>
@@ -21,7 +22,7 @@
   </div>
 </header>
 <main class="shell">
-  <p class="context">Demonstração · dados simulados compartilhados em tempo real</p>
+  <p class="context">Demonstração · dados simulados</p>
   <p class="context">Bovinu’s Grill &amp; Beer · Unidade Augusta</p>
   <h1>Gestão do almoço</h1>
   <p>Operação em tempo real, da fila à decisão do gerente.</p>
@@ -41,13 +42,15 @@
           <button>Salvar ação</button>
         </form>
         <p data-comparison></p>
-        <form data-action="medir">
+        <details class="measure"><summary>Registrar medição</summary><form data-action="medir">
           <label for="ch-people">Pessoas na fila</label>
           <input id="ch-people" name="people" type="number" min="0" max="200" required>
           <label for="ch-wait">Espera cronometrada em segundos (opcional)</label>
           <input id="ch-wait" name="wait" type="number" min="0" max="3600">
+          <button class="suggestion" type="button" data-sim="fila">Carregar leitura simulada</button>
           <button>Salvar medição</button>
         </form>
+        </details>
         <details><summary>Configurar limite</summary>
           <form data-action="limite">
             <label for="ch-limit">Alerta a partir de quantas pessoas?</label>
@@ -67,13 +70,15 @@
           <button>Salvar ação</button>
         </form>
         <p data-comparison></p>
-        <form data-action="medir">
+        <details class="measure"><summary>Registrar medição</summary><form data-action="medir">
           <label for="bf-people">Pessoas na fila</label>
           <input id="bf-people" name="people" type="number" min="0" max="200" required>
           <label for="bf-wait">Espera cronometrada em segundos (opcional)</label>
           <input id="bf-wait" name="wait" type="number" min="0" max="3600">
+          <button class="suggestion" type="button" data-sim="fila">Carregar leitura simulada</button>
           <button>Salvar medição</button>
         </form>
+        </details>
         <details><summary>Configurar limite</summary>
           <form data-action="limite">
             <label for="bf-limit">Alerta a partir de quantas pessoas?</label>
@@ -86,6 +91,13 @@
   </section>
   <section aria-labelledby="buffet-title">
     <h2 id="buffet-title">Composição e qualidade</h2>
+    <div class="quality-summary operations-grid" id="quality-summary" aria-label="Resumo do buffet">
+      <article class="card"><h3>Pesagem do prato</h3><p data-quality="mix">Sem registro.</p></article>
+      <article class="card"><h3>Sobras por item</h3><p data-quality="sobra">Sem registro.</p></article>
+      <article class="card"><h3>Comentário</h3><p data-quality="comentario">Sem registro.</p></article>
+      <article class="card"><h3>Ação do gerente</h3><p data-quality="acao">Sem registro.</p></article>
+    </div>
+    <details><summary>Adicionar registros do buffet</summary>
     <div class="operations-grid">
       <form class="card" data-action="observar" data-kind="mix">
         <h3>Pesagem de um prato</h3>
@@ -93,6 +105,7 @@
         <input id="meat" name="first" type="number" min="0" max="5000" required>
         <label for="sides">Outros alimentos em gramas</label>
         <input id="sides" name="second" type="number" min="0" max="5000" required>
+        <button class="suggestion" type="button" data-sim="prato">Carregar amostra simulada</button>
         <button>Salvar composição</button>
       </form>
       <form class="card" data-action="observar" data-kind="sobra">
@@ -113,6 +126,7 @@
         <select id="source" name="source"><option>Buffet</option><option>Mesa</option></select>
         <label for="comment">Comentário</label>
         <textarea id="comment" name="note" maxlength="240" required></textarea>
+        <p data-comment-tag role="status"></p>
         <button>Salvar comentário</button>
       </form>
       <form class="card" data-action="observar" data-kind="acao">
@@ -124,10 +138,22 @@
         <button>Salvar ação</button>
       </form>
     </div>
+    </details>
     <h3>Comparação das sobras após uma ação</h3>
     <ul id="buffet-comparison" class="calls"></ul>
     <h3>Registros recentes</h3>
     <ul id="observations" class="calls"></ul>
+  </section>
+  <section aria-labelledby="service-title" class="service-panel">
+    <h2 id="service-title">Atendimento no salão</h2>
+    <dl class="role-stats">
+      <div><dt>Aguardando</dt><dd id="management-waiting">—</dd></div>
+      <div><dt>Em atendimento</dt><dd id="management-serving">—</dd></div>
+      <div><dt>Concluídos na demo</dt><dd id="management-done">—</dd></div>
+      <div><dt>Limpezas em aberto</dt><dd id="management-cleaning">—</dd></div>
+    </dl>
+    <ul id="management-calls" class="calls"></ul>
+    <p id="management-service-error" role="status" hidden>Chamados indisponíveis. O painel tentará reconectar.</p>
   </section>
   <div class="demo-flow" aria-label="Fluxo operacional integrado">
     <span>1 · Detectar</span><span>2 · Alertar</span><span>3 · Assumir</span><span>4 · Resolver</span><span>5 · Medir impacto</span>

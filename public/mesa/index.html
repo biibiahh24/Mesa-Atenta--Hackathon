@@ -3,72 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Mesa 07 · Mesa Atenta</title>
-  <link rel="stylesheet" href="/style.css">
+  <title>Cliente · Mesa Atenta</title>
+  <link rel="stylesheet" href="/showcase.css">
+  <link rel="stylesheet" href="/operacao.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.min.js" defer></script>
   <script src="/demo.js" defer></script>
   <script src="/app.js" defer></script>
-  <script src="/gestao.js" defer></script>
 </head>
-<body>
-<header>
-  <div class="shell top">
-    <a class="brand" href="/">Bovinu’s · Mesa Atenta</a>
-    <nav aria-label="Telas de demonstração">
-      <a href="/mesa?mesa=07" id="customer-link">Mesa</a>
-      <a href="/equipe" id="staff-link">Salão</a>
-      <a href="/gestao">Gestão</a>
-    </nav>
-  </div>
-</header>
-<main class="shell">
-  <p class="context">Demonstração · dados simulados compartilhados em tempo real</p>
-  <p class="context">Bovinu’s · Unidade Augusta · Almoço</p>
-  <section id="customer" hidden>
-    <div class="customer-hero"><div class="table-orb">07</div><p class="section-kicker">Atendimento inteligente</p><h1 id="table-title">Atendimento à mesa</h1><p id="table-area"></p></div>
-    <form id="table-form">
-      <label for="table">Número da mesa</label>
-      <div class="field"><input id="table" name="mesa" inputmode="numeric" type="number" min="1" max="90" required><button>Abrir mesa</button></div>
+<body data-role="Mesa">
+<main class="phone-panel role-panel">
+  <header><h1>Cliente</h1><span>Bovinu’s · Augusta</span></header>
+  <nav aria-label="Telas da demonstração"><a href="/gestao">Gestão</a><a href="/equipe">Salão</a><a href="/mesa?mesa=07" aria-current="page">Mesa</a></nav>
+  <div class="phone-content">
+    <p class="role-demo">Demonstração · dados simulados</p>
+    <div class="table-label"><span aria-hidden="true">▱</span><strong id="table-title">Identifique sua mesa</strong><small id="table-area"></small></div>
+    <form id="table-form" class="cleaning-form" action="/mesa" method="get">
+      <label for="table">Número da mesa (1 a 90)</label>
+      <div><input id="table" name="mesa" inputmode="numeric" type="number" min="1" max="90" required><button>Abrir</button></div>
     </form>
-    <section class="card" id="actions" hidden>
-      <h2>Como podemos ajudar?</h2>
-      <div class="actions">
-        <button data-reason="bebida">Pedir atendimento para bebida</button>
-        <button data-reason="atendimento" class="secondary">Chamar atendimento</button>
+    <p role="alert" id="error" hidden></p>
+    <section id="actions" hidden>
+      <h2 class="client-question">Como podemos ajudar?</h2>
+      <button class="client-action" data-reason="bebida" type="button"><span aria-hidden="true">♧</span>Pedir atendimento<br>para bebida</button>
+      <button class="client-action" data-reason="atendimento" type="button"><span aria-hidden="true">⌒</span>Chamar atendimento</button>
+      <div class="client-progress" aria-label="Etapas do chamado">
+        <div><i aria-hidden="true">1</i><span>Aguardando</span></div>
+        <div><i aria-hidden="true">2</i><span>Em atendimento</span></div>
+        <div><i aria-hidden="true">3</i><span>Concluído</span></div>
       </div>
-      <div class="customer-timeline" aria-label="Etapas da solicitação"><span>Solicitado</span><span>Garçom a caminho</span><span>Concluído</span></div>
+      <p class="client-confirmation" id="client-confirmation" role="status" hidden></p>
+      <p id="notice" role="status"></p>
+      <h3>Seus chamados</h3>
+      <ul id="calls" class="calls"></ul>
     </section>
-  </section>
-  <section id="staff" hidden>
-    <p class="section-kicker">Operação do salão</p>
-    <h1>Painel do salão</h1>
-    <p>Atenda primeiro os chamados com maior espera.</p>
-    <div class="stats">
-      <div><span>Aguardando</span><strong id="waiting">—</strong></div>
-      <div><span>Em atendimento</span><strong id="serving">—</strong></div>
-      <div><span>Espera média recente</span><strong id="average">—</strong></div>
-    </div>
-    <label for="area">Filtrar por salão</label>
-    <select id="area"><option value="">Todos os salões</option><option>Salão principal</option><option>Salão superior</option><option>Salão inferior</option></select>
-  </section>
-  <p role="status" id="notice"></p>
-  <p role="alert" id="error" hidden></p>
-  <section aria-labelledby="list-title">
-    <h2 id="list-title">Chamados</h2>
-    <ul id="calls" class="calls"></ul>
-  </section>
-  <section id="cleaning-panel" aria-labelledby="cleaning-title" hidden>
-    <p class="section-kicker">Fila operacional</p>
-    <h2 id="cleaning-title">Limpeza do salão</h2>
-    <form class="card" data-action="sinalizar">
-      <label for="clean-table">Número da mesa que precisa de limpeza</label>
-      <input id="clean-table" name="table" type="number" min="1" max="90" required>
-      <button>Sinalizar mesa</button>
-    </form>
-    <p role="status" id="operations-status"></p>
-    <p role="alert" id="operations-error" hidden></p>
-    <ul class="calls" id="cleaning-list"></ul>
-  </section>
+  </div>
 </main>
 </body>
 </html>

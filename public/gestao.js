@@ -1,6 +1,6 @@
 (() => {
-  const management = location.pathname === '/gestao';
-  const staff = location.pathname === '/equipe';
+  const management = document.body.dataset.role === 'Gestão';
+  const staff = document.body.dataset.role === 'Salão';
   if (!management && !staff) return;
 
   const get = (id) => document.getElementById(id);
@@ -9,6 +9,7 @@
   const pending = new Map();
   const areas = ['Salão principal', 'Salão superior', 'Salão inferior'];
   let snapshot;
+  let service;
   let loading = false;
   let busy = false;
 
@@ -57,6 +58,44 @@
 
   function sampleLabel(sample) {
     return sample.n ? `${duration(sample.median)} (n=${sample.n})` : 'sem amostras';
+  }
+
+  function renderService() {
+    const list = get('management-calls');
+    if (!list || !service) return;
+    const calls = service.calls;
+    get('management-waiting').textContent = calls.filter((row) => row.started === null).length;
+    get('management-serving').textContent = calls.filter((row) => row.started !== null && row.finished === null).length;
+    get('management-done').textContent = calls.filter((row) => row.finished !== null).length;
+    list.replaceChildren();
+    for (const call of [...calls].sort((a, b) => (b.finished ?? b.started ?? b.created) - (a.finished ?? a.started ?? a.created) || b.id - a.id).slice(0, 5)) {
+      const row = document.createElement('li');
+      const label = document.createElement('strong');
+      const detail = document.createElement('span');
+      row.className = 'call';
+      label.textContent = `Mesa ${String(call.table).padStart(2, '0')} · ${call.reason === 'bebida' ? 'Bebida' : 'Atendimento'}`;
+      const state = call.finished !== null ? 'Concluído' : call.started !== null ? 'Em atendimento' : 'Aguardando';
+      row.dataset.state = call.finished !== null ? 'done' : 'open';
+      detail.textContent = `${state} · espera ${duration((call.started ?? service.now) - call.created)}`;
+      row.append(label, detail);
+      list.append(row);
+    }
+    if (!list.children.length) {
+      const empty = document.createElement('li');
+      empty.textContent = 'Nenhum chamado registrado.';
+      list.append(empty);
+    }
+  }
+
+  function renderQualitySummary() {
+    for (const node of document.querySelectorAll('[data-quality]')) {
+      const record = snapshot.observations.find((row) => row.kind === node.dataset.quality);
+      if (!record) continue;
+      const { first_value: first, second_value: second, item, kind, note, source } = record;
+      if (kind === 'mix') node.textContent = `${first} g carne · ${second} g outros · ${Math.round(100 * first / (first + second))}% carne`;
+      else if (kind === 'sobra') node.textContent = `${item}: ${first} de ${second} pratos`;
+      else node.textContent = kind === 'comentario' ? `${source} · ${item}: ${note}` : `${item}: ${note}`;
+    }
   }
 
   function renderObservations() {
@@ -115,7 +154,8 @@
     list.replaceChildren();
     for (const task of [...open, ...recent]) {
       const row = document.createElement('li');
-      row.className = 'call';
+      row.className = 'task-card';
+      row.classList.toggle('active-task', task.started !== null);
       const line = document.createElement('span');
       const state = task.finished !== null ? 'Mesa pronta' : task.started !== null ? 'Em limpeza' : 'Aguardando limpeza';
       line.textContent = `Mesa ${task.table_no} · ${area(task.table_no)} · ${state} · ${duration((task.finished ?? snapshot.now) - task.created)} desde a sinalização`;
@@ -137,6 +177,8 @@
     if (!snapshot) return;
     if (management) {
       snapshot.queues.forEach(renderQueue);
+      get('management-cleaning').textContent = snapshot.cleaning.filter((task) => task.finished === null).length;
+      renderQualitySummary();
       renderObservations();
       renderBuffetComparison();
     } else {
@@ -148,7 +190,18 @@
     if (loading || busy) return;
     loading = true;
     try {
-      snapshot = await api('/api/operacao');
+      const [operation, calls] = await Promise.allSettled([
+        api('/api/operacao'), management ? api('/api/chamados') : Promise.resolve(null),
+      ]);
+      if (management) {
+        get('management-service-error').hidden = calls.status === 'fulfilled';
+        if (calls.status === 'fulfilled') {
+          service = calls.value;
+          renderService();
+        }
+      }
+      if (operation.status === 'rejected') throw operation.reason;
+      snapshot = operation.value;
       render();
       if (error.dataset.source === 'refresh') showError('');
     } catch {
@@ -191,6 +244,31 @@
     }
   }
 
+  for (const button of document.querySelectorAll('[data-sim]')) {
+    button.addEventListener('click', () => {
+      const form = button.closest('form');
+      let fixture;
+      if (button.dataset.sim === 'limpeza') fixture = { table: 12 };
+      else if (button.dataset.sim === 'prato') fixture = { first: 160, second: 322 };
+      else fixture = form.closest('[data-place]').dataset.place === 'churrasqueira'
+        ? { people: 9, wait: 420 } : { people: 3, wait: 120 };
+      for (const [name, value] of Object.entries(fixture)) form.elements.namedItem(name).value = value;
+      status.textContent = 'Amostra simulada preenchida. Revise e confirme para salvar.';
+    });
+  }
+  const comment = get('comment');
+  function classifyComment() {
+    if (!comment) return;
+    const text = comment.value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const category = /fri[oa]|temperatura|gelad/.test(text) ? 'Temperatura'
+      : /seco|seca|duro|dura|textura/.test(text) ? 'Textura'
+      : /indispon|acabou|falta/.test(text) ? 'Disponibilidade'
+      : /fila|buffet|ingrediente/.test(text) ? 'Buffet'
+      : /garcom|atendimento|demor/.test(text) ? 'Atendimento' : null;
+    document.querySelector('[data-comment-tag]').textContent = category ? `Categoria sugerida por palavras-chave: ${category}.` : '';
+  }
+  comment?.addEventListener('input', classifyComment);
+
   for (const form of document.querySelectorAll('form[data-action]')) {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -202,7 +280,7 @@
       if (place) data.place = place;
       if (form.dataset.kind) data.kind = form.dataset.kind;
       if (form.dataset.id) data.id = Number(form.dataset.id);
-      if (await submit(form.dataset.action, data)) form.reset();
+      if (await submit(form.dataset.action, data)) { form.reset(); classifyComment(); }
     });
   }
 

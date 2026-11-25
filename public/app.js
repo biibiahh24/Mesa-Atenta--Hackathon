@@ -1,5 +1,5 @@
 const get = (id) => document.getElementById(id);
-const staff = location.pathname === '/equipe';
+const staff = document.body.dataset.role === 'Salão';
 const rawTable = new URLSearchParams(location.search).get('mesa');
 const table = /^\d{1,2}$/.test(rawTable || '') ? Number(rawTable) : 0;
 const validTable = table >= 1 && table <= 90;
@@ -51,24 +51,41 @@ function render() {
   }
   const list = get('calls');
   const focusId = list.contains(document.activeElement) ? document.activeElement.id : '';
-  const pending = open.filter((call) => call.started === null);
+  const pending = open.filter((call) => call.started === null).sort((a, b) => a.created - b.created);
   const serving = open.filter((call) => call.started !== null);
   const recent = done.sort((a, b) => b.finished - a.finished).slice(0, 5);
+  if (!staff) {
+    const current = [...open].sort((a, b) => b.created - a.created || b.id - a.id)[0] ?? recent[0];
+    const step = current ? (current.finished !== null ? 2 : current.started !== null ? 1 : 0) : -1;
+    const steps = [...document.querySelectorAll('.client-progress > div')];
+    steps.forEach((node, index) => {
+      node.classList.toggle('current', step === index);
+      node.classList.toggle('completed', index < step);
+      if (index === step) node.setAttribute('aria-current', 'step');
+      else node.removeAttribute('aria-current');
+    });
+    const confirmation = get('client-confirmation');
+    confirmation.hidden = step < 0;
+    const nextText = ['Seu chamado foi registrado. Aguarde o atendimento.', 'Um garçom assumiu seu chamado.', 'Atendimento concluído. Obrigado!'][step] ?? '';
+    if (confirmation.textContent !== nextText) confirmation.textContent = nextText;
+  }
   list.replaceChildren();
   for (const call of [...pending, ...serving, ...recent]) {
-    const row = element('li', '', 'call');
+    const row = element('li', '', 'task-card');
     const description = element('div', '');
     description.append(
-      element('strong', staff ? `Mesa ${tableLabel(call.table)} · ${call.area}` : reasons[call.reason]),
-      element('p', staff ? reasons[call.reason] : ''),
+      element('strong', staff ? `Mesa ${tableLabel(call.table)} · ${reasons[call.reason] ?? 'Atendimento'}` : (reasons[call.reason] ?? 'Atendimento')),
+      ...(staff ? [element('p', call.area)] : []),
     );
     const detail = element('div', '');
     const state = call.finished !== null ? 'Concluído' : call.started !== null ? 'Em atendimento' : 'Aguardando';
     detail.append(
-      element('span', state, call.finished !== null ? 'badge done' : 'badge'),
+      element('span', state, 'status-pill'),
       element('p', `Espera ${duration((call.started ?? snapshot.now) - call.created)}`),
     );
-    row.append(description, detail);
+    description.append(detail);
+    row.append(description);
+    row.classList.toggle('active-task', call.started !== null);
     if (staff && call.finished === null) {
       const action = call.started === null ? 'assumir' : 'concluir';
       const button = element('button', action === 'assumir' ? 'Assumir' : 'Concluir');
@@ -79,7 +96,7 @@ function render() {
     }
     list.append(row);
   }
-  if (!list.children.length) list.append(element('li', 'Nenhum chamado por enquanto.'));
+  if (!list.children.length) list.append(element('li', 'Nenhum chamado por enquanto.', 'empty'));
   if (focusId) get(focusId)?.focus();
 }
 
@@ -123,12 +140,9 @@ async function submit(path, options, success) {
   return saved;
 }
 
-get(staff ? 'staff' : 'customer').hidden = false;
-get(staff ? 'staff-link' : 'customer-link').setAttribute('aria-current', 'page');
 if (staff) {
   get('area').addEventListener('change', render);
 } else if (validTable) {
-  document.querySelector('.table-orb').textContent = tableLabel(table);
   get('table-title').textContent = `Mesa ${tableLabel(table)}`;
   get('table-area').textContent = areaFor(table);
   get('table-form').hidden = true;

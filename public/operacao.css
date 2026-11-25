@@ -1,0 +1,39 @@
+[hidden]{display:none!important}
+.role-panel{width:min(100% - 28px,460px);margin:26px auto;min-height:0}
+.role-panel>header{justify-content:space-between;gap:12px;height:auto;min-height:66px;padding:13px 18px}
+.role-panel h1{margin:0;color:#fff;font:700 clamp(24px,7vw,32px)/1.1 Georgia,serif}
+.role-panel>header span{color:#ffe6ad;font-size:12px;text-align:right}
+.role-panel nav{display:flex;gap:7px;padding:8px 13px;background:#fff5e8;border-bottom:1px solid var(--line)}
+.role-panel nav a{color:var(--wine-dark);text-decoration:none;padding:7px 12px;border-radius:8px;font-weight:700;font-size:13px}
+.role-panel nav a[aria-current]{background:var(--wine-dark);color:#fff}
+.role-demo{font-size:12px;color:#64463d;margin:0 0 11px}
+.role-panel .phone-content{padding:14px 16px 22px}
+.role-panel .table-label{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.role-panel .table-label span{margin:0}
+.role-panel .table-label small:not(:empty)::before{content:'· ';white-space:pre}
+.role-panel .client-action{padding:10px 35px 10px 55px}
+.role-panel .client-action span{left:17px}
+.role-panel .client-confirmation{min-height:56px;margin-bottom:10px;padding:12px;font-size:15px}
+.role-panel .client-progress .completed i{background:#287526;border-color:#287526;color:white}
+.role-panel .role-stats,.service-panel .role-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(76px,1fr));gap:7px;margin:10px 0}
+.role-stats div{padding:9px 5px;border:1px solid #e5d6c6;border-radius:9px;background:#fffaf1;text-align:center}
+.role-stats dt{font-size:11px;font-weight:700}
+.role-stats dd{margin:5px 0 0;color:#640b23;font-weight:800;font-size:16px}
+.role-panel .calls{list-style:none;margin:0;padding:0}
+.role-panel .task-card{grid-template-columns:minmax(0,1fr) auto;padding:10px;min-height:60px}
+.role-panel .task-card p{margin:4px 0}
+.role-panel .task-card button{font-size:12px;max-width:120px}
+.role-panel .status-pill{display:inline-block;padding:3px 6px;border-radius:6px;background:#f7e7bc;font-size:11px;font-weight:700}
+.role-panel .empty{color:#64463d;font-size:13px;padding:9px 3px}
+.role-panel [role=alert]{color:#9b0d26;font-weight:700}
+.role-panel input{width:100%;min-width:0;min-height:42px;border:1px solid #b5a99e;border-radius:8px;padding:6px 9px;font:inherit}
+body[data-role="Gestão"]{padding-bottom:20px}
+body[data-role="Gestão"] [data-active="true"]{background:#fff2ee}
+body[data-role="Gestão"] [data-active="false"]{background:#f3faed}
+body[data-role="Gestão"] details{margin:10px 0}
+body[data-role="Gestão"] .quality-summary{grid-template-columns:repeat(4,minmax(0,1fr))}
+body[data-role="Gestão"] .service-panel li{display:flex;align-items:center;justify-content:space-between}
+body[data-role="Gestão"] .service-panel [data-state=done]{color:#205f23}
+@media(max-width:740px){body[data-role="Gestão"] .quality-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.role-panel{width:100%;margin:0;border:0;border-radius:0;min-height:100dvh}}
+button.suggestion{margin-top:8px;border:1px solid #cbb9a5;border-radius:7px;background:#fff8e8;color:#650c25;font-weight:700;padding:8px 10px;cursor:pointer}
