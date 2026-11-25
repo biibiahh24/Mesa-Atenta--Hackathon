@@ -17,7 +17,7 @@ Requer Python 3.10+ e usa somente a biblioteca padrão.
 python3 app.py
 ```
 
-- Visão integrada: http://127.0.0.1:8000/
+- Entrada: http://127.0.0.1:8000/ (abre Gestão)
 - Mesa 07: http://127.0.0.1:8000/mesa?mesa=07
 - Salão: http://127.0.0.1:8000/equipe
 - Gestão: http://127.0.0.1:8000/gestao

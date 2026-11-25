@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent
 DB = os.environ.get("MESA_DB", ROOT / "mesa.sqlite3")
 AREAS = {1: "Salão principal", 31: "Salão superior", 71: "Salão inferior"}
 ASSETS = {
-    "/": ("showcase.html", "text/html"),
+    "/": ("index.html", "text/html"),
     "/mesa": ("index.html", "text/html"),
     "/gestao": ("gestao.html", "text/html"),
     "/gestao.js": ("gestao.js", "text/javascript"),
