@@ -38,6 +38,8 @@ No PowerShell, defina `$env:MESA_DB='demo.sqlite3'` antes de executar `py app.py
 
 ### Prévia na Vercel
 
+[Abrir a implantação pública na Vercel](https://mesa-atenta-hackathon.vercel.app).
+
 A pasta `public/` contém a mesma demonstração estática para implantação na Vercel.
 Ela persiste dados simulados no navegador e não substitui o backend Python/SQLite.
 Para uma implantação multiusuário, a persistência deve migrar para PostgreSQL/Supabase.
