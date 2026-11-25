@@ -36,6 +36,12 @@ No PowerShell, defina `$env:MESA_DB='demo.sqlite3'` antes de executar `py app.py
 
 [Abrir a prévia privada do Mesa Atenta](https://mesa-atenta-augusta.oliverr-biahh10.chatgpt.site). A prévia guarda dados simulados no navegador. O projeto executado pelos comandos acima usa a API Python e o SQLite.
 
+### Prévia na Vercel
+
+A pasta `public/` contém a mesma demonstração estática para implantação na Vercel.
+Ela persiste dados simulados no navegador e não substitui o backend Python/SQLite.
+Para uma implantação multiusuário, a persistência deve migrar para PostgreSQL/Supabase.
+
 ## Desenvolvimento e integração
 
 ```mermaid

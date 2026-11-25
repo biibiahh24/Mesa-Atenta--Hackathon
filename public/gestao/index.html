@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestão do almoço · Mesa Atenta</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/demo.js" defer></script>
+  <script src="/gestao.js" defer></script>
+</head>
+<body>
+<header>
+  <div class="shell top">
+    <a class="brand" href="/gestao">Bovinu’s · Mesa Atenta</a>
+    <nav aria-label="Telas da operação">
+      <a href="/gestao" aria-current="page">Gestão</a>
+      <a href="/equipe">Salão</a>
+      <a href="/?mesa=07">Mesa</a>
+    </nav>
+  </div>
+</header>
+<main class="shell">
+  <p class="context">Demonstração · dados simulados salvos neste navegador</p>
+  <p class="context">Bovinu’s Grill &amp; Beer · Unidade Augusta</p>
+  <h1>Gestão do almoço</h1>
+  <p>Operação em tempo real, da fila à decisão do gerente.</p>
+  <p role="status" id="operations-status"></p>
+  <p role="alert" id="operations-error" hidden></p>
+  <section aria-labelledby="queues-title">
+    <h2 id="queues-title">Filas e avisos</h2>
+    <div class="operations-grid">
+      <article class="card queue" data-place="churrasqueira">
+        <h3>Churrasqueira</h3>
+        <p data-reading>Carregando contagem…</p>
+        <p data-alert></p>
+        <button data-ack hidden>Confirmar ciência</button>
+        <form data-action="intervir" hidden>
+          <label for="ch-action">Ação na churrasqueira</label>
+          <input id="ch-action" name="note" maxlength="240" required placeholder="Ex.: orientar a entrada da fila">
+          <button>Salvar ação</button>
+        </form>
+        <p data-comparison></p>
+        <form data-action="medir">
+          <label for="ch-people">Pessoas na fila</label>
+          <input id="ch-people" name="people" type="number" min="0" max="200" required>
+          <label for="ch-wait">Espera cronometrada em segundos (opcional)</label>
+          <input id="ch-wait" name="wait" type="number" min="0" max="3600">
+          <button>Salvar medição</button>
+        </form>
+        <details><summary>Configurar limite</summary>
+          <form data-action="limite">
+            <label for="ch-limit">Alerta a partir de quantas pessoas?</label>
+            <input id="ch-limit" name="threshold" type="number" min="1" max="200" required>
+            <button>Salvar limite</button>
+          </form>
+        </details>
+      </article>
+      <article class="card queue" data-place="buffet">
+        <h3>Buffet</h3>
+        <p data-reading>Carregando contagem…</p>
+        <p data-alert></p>
+        <button data-ack hidden>Confirmar ciência</button>
+        <form data-action="intervir" hidden>
+          <label for="bf-action">Ação no buffet</label>
+          <input id="bf-action" name="note" maxlength="240" required>
+          <button>Salvar ação</button>
+        </form>
+        <p data-comparison></p>
+        <form data-action="medir">
+          <label for="bf-people">Pessoas na fila</label>
+          <input id="bf-people" name="people" type="number" min="0" max="200" required>
+          <label for="bf-wait">Espera cronometrada em segundos (opcional)</label>
+          <input id="bf-wait" name="wait" type="number" min="0" max="3600">
+          <button>Salvar medição</button>
+        </form>
+        <details><summary>Configurar limite</summary>
+          <form data-action="limite">
+            <label for="bf-limit">Alerta a partir de quantas pessoas?</label>
+            <input id="bf-limit" name="threshold" type="number" min="1" max="200" required>
+            <button>Salvar limite</button>
+          </form>
+        </details>
+      </article>
+    </div>
+  </section>
+  <section aria-labelledby="buffet-title">
+    <h2 id="buffet-title">Composição e qualidade</h2>
+    <div class="operations-grid">
+      <form class="card" data-action="observar" data-kind="mix">
+        <h3>Pesagem de um prato</h3>
+        <label for="meat">Carne em gramas</label>
+        <input id="meat" name="first" type="number" min="0" max="5000" required>
+        <label for="sides">Outros alimentos em gramas</label>
+        <input id="sides" name="second" type="number" min="0" max="5000" required>
+        <button>Salvar composição</button>
+      </form>
+      <form class="card" data-action="observar" data-kind="sobra">
+        <h3>Sobras por item</h3>
+        <label for="left-item">Item do buffet</label>
+        <input id="left-item" name="item" maxlength="80" required>
+        <label for="samples">Pratos com o item na amostra</label>
+        <input id="samples" name="second" type="number" min="1" max="1000" required>
+        <label for="left">Pratos em que o item sobrou</label>
+        <input id="left" name="first" type="number" min="0" max="1000" required>
+        <button>Salvar sobras</button>
+      </form>
+      <form class="card" data-action="observar" data-kind="comentario">
+        <h3>Comentário do cliente</h3>
+        <label for="comment-item">Item ou assunto</label>
+        <input id="comment-item" name="item" maxlength="80" required>
+        <label for="source">Local da coleta</label>
+        <select id="source" name="source"><option>Buffet</option><option>Mesa</option></select>
+        <label for="comment">Comentário</label>
+        <textarea id="comment" name="note" maxlength="240" required></textarea>
+        <button>Salvar comentário</button>
+      </form>
+      <form class="card" data-action="observar" data-kind="acao">
+        <h3>Ação sobre o buffet</h3>
+        <label for="buffet-item">Item ou assunto</label>
+        <input id="buffet-item" name="item" maxlength="80" required>
+        <label for="buffet-action">O que a equipe vai testar?</label>
+        <textarea id="buffet-action" name="note" maxlength="240" required></textarea>
+        <button>Salvar ação</button>
+      </form>
+    </div>
+    <h3>Comparação das sobras após uma ação</h3>
+    <ul id="buffet-comparison" class="calls"></ul>
+    <h3>Registros recentes</h3>
+    <ul id="observations" class="calls"></ul>
+  </section>
+  <div class="demo-flow" aria-label="Fluxo operacional integrado">
+    <span>1 · Detectar</span><span>2 · Alertar</span><span>3 · Assumir</span><span>4 · Resolver</span><span>5 · Medir impacto</span>
+  </div>
+</main>
+</body>
+</html>
