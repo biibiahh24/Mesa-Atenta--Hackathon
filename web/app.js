@@ -128,6 +128,7 @@ get(staff ? 'staff-link' : 'customer-link').setAttribute('aria-current', 'page')
 if (staff) {
   get('area').addEventListener('change', render);
 } else if (validTable) {
+  document.querySelector('.table-orb').textContent = tableLabel(table);
   get('table-title').textContent = `Mesa ${tableLabel(table)}`;
   get('table-area').textContent = areaFor(table);
   get('table-form').hidden = true;
