@@ -40,11 +40,7 @@ MESA_DB=demo.sqlite3 python3 app.py
 
 No PowerShell, defina `$env:MESA_DB='demo.sqlite3'` antes de executar `py app.py`. O comando de carga recusa sobrescrever um banco existente. Execute a carga pouco antes da demonstração para manter as leituras recentes.
 
-## Prévia no Sites
-
-[Abrir a prévia privada do Mesa Atenta](https://mesa-atenta-augusta.oliverr-biahh10.chatgpt.site). A prévia guarda dados simulados no navegador. O projeto executado pelos comandos acima usa a API Python e o SQLite.
-
-### Prévia na Vercel
+## Demo na Vercel
 
 [Abrir a implantação pública na Vercel](https://mesa-atenta-hackathon.vercel.app).
 
