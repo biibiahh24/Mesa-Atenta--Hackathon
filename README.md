@@ -2,6 +2,15 @@
 
 Painel para acompanhar o almoço da Bovinu’s Grill & Beer, unidade Augusta. O cliente pode solicitar atendimento na mesa. A equipe acompanha tarefas de atendimento e limpeza. O gerente registra medições, recebe avisos de fila e acompanha as observações sobre o buffet.
 
+> [!NOTE]
+> **Integração com IA · Mesa-Tempo (piloto local)**
+>
+> **Vídeo de teste da fila → OpenCV detecta e conta pessoas → API do Mesa Atenta salva a contagem no SQLite → painel de Gestão exibe a leitura.**
+>
+> No teste, a Gestão exibiu **2 pessoas** detectadas na área da fila. O piloto não grava imagens nem mede tempo de espera. A câmera do Bovinu’s não está conectada e o detector não roda na Vercel.
+>
+> [Como funciona e como testar](vision/README.md) · [Ver a demonstração (trecho aos 0:47)](https://mesa-atenta-hackathon.vercel.app/video-demo)
+
 ## Entrega · Hackathon Tech FMU 2026.2
 
 - **Vídeo da solução (1min09):** [Assistir sem login](https://mesa-atenta-hackathon.vercel.app/video-demo) · [MP4 no GitHub](public/mesa-atenta-demo.mp4). Mesa-Tempo a partir de 0:47.
@@ -59,7 +68,12 @@ uso real, adicione autenticação da equipe e políticas por função/unidade.
 flowchart LR
     Mesa["Mesa · chamado e status"] --> API["API HTTP em Python"]
     Salao["Salão · atendimento e limpeza"] --> API
-    Gestao["Gestão · filas, avisos e buffet"] --> API
+    Video["Vídeo de teste da fila"] --> Detector["Mesa-Tempo · OpenCV"]
+    Detector -->|Envia só a contagem| API
+    Gestao["Gestão · filas, avisos e buffet"] -->|Consulta leituras| API
+    API -->|Retorna a contagem para o painel| Gestao
+    classDef visao fill:#fff1d6,stroke:#a1691f,color:#3b2112
+    class Video,Detector visao
     API <-->|Grava e consulta registros| Banco["SQLite"]
 ```
 
