@@ -64,6 +64,10 @@ uso real, adicione autenticação da equipe e políticas por função/unidade.
 
 ## Desenvolvimento e integração
 
+![Diagrama de arquitetura do Mesa Atenta: Mesa, Salão e Gestão compartilham o Supabase na Vercel; no piloto local, o OpenCV envia a contagem do vídeo à API, que registra no SQLite e mostra o resultado na Gestão.](docs/diagrama-arquitetura.png)
+
+[Ver o diagrama em tamanho original (PNG)](docs/diagrama-arquitetura.png). Este é o diagrama de arquitetura, separado das cinco capturas da solução.
+
 ```mermaid
 flowchart LR
     Mesa["Mesa · chamado e status"] --> API["API HTTP em Python"]
