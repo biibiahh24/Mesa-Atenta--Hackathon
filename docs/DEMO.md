@@ -1,38 +1,23 @@
 # Demonstração e entrega
 
-Abra Gestão, Salão e Mesa 07. Para gravar, use o banco simulado gerado pelo comando do README. No trecho do alerta, salve a ação e registre uma leitura de recuperação. Se quiser mostrar o encerramento, registre uma segunda leitura abaixo do limite 45 a 90 s depois e use um corte no vídeo.
+- [Vídeo da solução: 1min09](https://mesa-atenta-hackathon.vercel.app/video-demo) · [MP4 no GitHub](../public/mesa-atenta-demo.mp4)
+- [Apresentação de cinco slides](apresentacao.pdf) · [PowerPoint](pitch.pptx) · [Roteiro](roteiro-pitch.txt)
+- [Cinco capturas da versão executável](capturas/)
 
-| Tempo | Mostrar |
+| Vídeo | Sequência |
 |---|---|
-| 0:00–0:15 | Unidade Augusta e as dores do almoço por peso. |
-| 0:15–0:40 | Alerta da churrasqueira, ciência do gerente, intervenção e medição posterior. |
-| 0:40–1:05 | Cliente chama na mesa 07, equipe assume e conclui. |
-| 1:05–1:25 | Equipe assume a limpeza da mesa 12 e marca como pronta. |
-| 1:25–1:55 | Pesagem amostral, registro de sobra/comentário e comparação após ação no buffet. |
+| 0:00–0:07 | Contexto do almoço na unidade Augusta |
+| 0:07–0:27 | Mesa 07 pede atendimento; Salão assume e conclui; Gestão acompanha |
+| 0:27–0:36 | Salão assume a limpeza da Mesa 12 e marca a mesa pronta |
+| 0:36–0:47 | Gestão confirma o aviso, registra a ação e compara a espera |
+| 0:47–1:00 | Mesa-Tempo conta pessoas em vídeo de teste e envia a leitura à Gestão local |
+| 1:00–1:09 | Pesagem, sobras, comentários e comparação após uma ação no buffet |
 
-No pitch de até quatro minutos, preserve essa sequência e use o tempo adicional para explicar o papel de cada tela e a leitura dos indicadores. A FMU informa que as perguntas vêm depois do pitch.
+## Testes e limites
 
-## Testes executados
+- `python3 -m tests.verify_http`: atendimento, limpeza concorrente, alertas, recuperação, buffet, idempotência e persistência com SQLite temporário.
+- `node tests/verify_ui.cjs`: Mesa, Salão e Gestão em contextos de navegador independentes, com ambiente isolado. Ver instruções no README.
+- A Vercel serve as três telas, que leem o Supabase de demonstração. Não se gravou dado de teste no Supabase publicado.
+- O Mesa-Tempo foi validado com vídeo de teste. Não está conectado à câmera do restaurante nem roda na Vercel. A contagem não estima o tempo de espera.
 
-Para repetir a verificação a partir da raiz do repositório, execute `python3 -m tests.verify_http`. No Windows, use `py -m tests.verify_http`.
-
-O teste executa o servidor HTTP com SQLite temporário. Foram verificados os seguintes fluxos.
-
-- Páginas de Mesa, Salão e Gestão e seus recursos servidos com HTTP 200.
-- Atendimento da mesa 07 até conclusão. Reenvio preservou o chamado e concluir antes de assumir foi bloqueado.
-- Oito sinalizações concorrentes da mesma mesa geraram uma tarefa. Um dos dois operadores concorrentes conseguiu assumir a limpeza. A API rejeitou mesa inválida e conclusão antes de assumir.
-- Medições repetidas acima do limite geraram um aviso, seguido de ciência, intervenção, recuperação e encerramento. Comparação de espera retornou medianas de 450 s antes e 210 s depois, com duas amostras em cada período simulado. A leitura vencida foi sinalizada.
-- Mix, sobra, comentário e ação foram registrados. Sobra acima da amostra foi rejeitada. Reenvio do mesmo registro foi deduplicado e o estado persistiu ao reinicializar o banco.
-- Carga do almoço simulado gerou o aviso, a tarefa de limpeza e os registros do buffet. Checagens de sintaxe Python e JavaScript passaram.
-
-## Conferência antes de enviar
-
-- [x] Código, documentação, instruções de execução, esquema, diagrama e apresentação.
-- [ ] Validar o fluxo visual completo em navegador.
-- [ ] Incluir até cinco capturas da versão executável.
-- [ ] Gravar e incluir o link do vídeo de até dois minutos. Conferir acesso sem login.
-- [ ] Publicar GitHub e testar em janela anônima. Manter público durante a avaliação.
-- [ ] O líder envia o link até 26/11/2026 às 12h pelo [Forms oficial](https://forms.cloud.microsoft/r/ZFk82fpieq).
-- [ ] Acompanhar o e-mail até as 16h. Final a partir das 19h.
-
-A prévia gerenciada falhou na abertura da rota do navegador. A verificação visual e a gravação seguem pendentes.
+O líder informa o link do GitHub público pelo [Forms da FMU](https://forms.cloud.microsoft/r/ZFk82fpieq). O repositório deve permanecer público durante a avaliação. O pitch de até quatro minutos é para as equipes finalistas.

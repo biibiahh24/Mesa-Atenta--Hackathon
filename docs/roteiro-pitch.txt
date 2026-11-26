@@ -1,0 +1,17 @@
+MESA ATENTA | Roteiro de apresentação
+Tempo estimado: 3min34, com o vídeo. Limite: 4 min.
+
+01. 0:00–0:48
+No almoço da unidade Augusta, o desafio é perceber o que está travando o atendimento enquanto o salão ainda está cheio. O Mesa Atenta reúne atendimento à mesa, limpeza, filas e acompanhamento do buffet numa operação só, com uma tela para cada papel. Os problemas parecem separados, mas acontecem ao mesmo tempo. Enquanto o cliente aguarda uma bebida, a equipe precisa liberar uma mesa e a gestão precisa perceber onde a fila cresceu. No buffet, além de agir, o gerente precisa registrar comentários e sobras para saber se uma mudança merece continuar.
+
+02. 0:48–1:17
+A Mesa abre o chamado e acompanha o status. O Salão assume o atendimento e sinaliza, inicia ou conclui a limpeza. A Gestão acompanha esses eventos, confirma avisos e compara medições antes e depois de uma ação. O Mesa-Tempo faz parte desse fluxo: acrescenta uma leitura de fila ao mesmo painel, sem trocar as telas nem tirar as funções já existentes.
+
+03. 1:17–1:51
+No piloto do Mesa-Tempo, usamos visão computacional para contar pessoas numa área delimitada. Nesse vídeo de teste, o detector encontrou duas pessoas e o painel local recebeu a leitura. Não guardamos imagens nem identificamos rostos. A câmera do Bovinu’s ainda não foi conectada. A ideia é reaproveitar uma câmera ou o gravador que eles já usam, se o TI autorizar e o ângulo cobrir a fila. E são indicadores diferentes: a câmera conta pessoas; a espera continua cronometrada à parte.
+
+04. 1:51–3:00
+Clique para reproduzir o vídeo de 1min09. A cena do Mesa-Tempo começa aos 0:47 do vídeo. O vídeo é legendado e não exige áudio. Se o PowerPoint não reproduzir, abra o MP4 avulso na mesma pasta.
+
+05. 3:00–3:34
+O próximo passo é escolher uma câmera da churrasqueira com o TI e comparar as contagens do Mesa-Tempo com uma contagem manual no horário de pico. Em paralelo, a equipe cronometra a espera e registra a ação tomada para comparar o resultado. A proposta é começar pequeno, sem trocar as câmeras e sem expor as imagens. Assim o restaurante consegue avaliar se o painel ajuda a equipe a agir no momento certo.
